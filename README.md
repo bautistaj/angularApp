@@ -1,27 +1,25 @@
-# AngularApp
+# How to deploy an Angular App in Apache Tomcat with Azure DevOps 
+This project is part of a tutorial where i explain how to configure Apache Tomcat and how to create a pipeline to deploy using Azure DevOps it.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.3.
 
-## Development server
+## Get Start
+```bash
+git clone git@github.com:bautistaj/angularApp.git
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+cd angularApp
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+npm install
+```
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+Once run `npm run build` run `npm run build:war`, this command convert the build into a war file which will stored in the `dist/` directory.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Deploy
 
-## Running end-to-end tests
+You can copy and paste in webapps directory of Apache Tomcat, you can read this tutorial [How to deploy an Angular App in Apache Tomcat with Azure DevOps](https://medium.com/@bautistaj20/how-to-deploy-an-angular-app-in-apache-tomcat-with-azure-devops-900e67a21122).
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
