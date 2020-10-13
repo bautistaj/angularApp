@@ -1,0 +1,64 @@
+trigger:
+  branches:
+    include:
+      - master
+      - release/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: angular-app-vars
+
+stages:
+  - stage: 'Build_Publish_Artifact'
+    displayName: 'Build and Publish Artifact'
+    jobs:
+      - job: 'Build_Publish_Artifact'
+        displayName: 'Build and Publish Artifact'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '10.x'
+            displayName: 'Install Node.js'
+    
+          - script: |
+              npm install
+              npm run build
+              npm run build:war
+            displayName: 'PublishPipelineArtifact'
+    
+          - task: PublishPipelineArtifact@1
+            inputs:
+              artifactsFeeds: angularApp
+              targetPath: '$(output.directory)/$(artifact.name)'
+              artifactName: '$(artifact.azure.name)'
+            displayName: 'PublishPipelineArtifact'
+            name: 'PublishPipelineArtifact'
+
+  - stage: 'Deploy_to_STAGING'
+    displayName: 'Deploy Artifact to STAGING'
+    dependsOn: 'Build_Publish_Artifact'
+    jobs:
+      # track deployments on the environment
+      - deployment: 'Deploy_Artifact_To_STAGING'
+        displayName: 'Deploy Web App to STAGING'
+        pool:
+          vmImage: 'ubuntu-latest'
+          # creates an environment if it doesn't exist
+        environment: 'STAGING'
+        strategy:
+          # default deployment strategy, more coming...
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    targetPath: '$(output.directory)/'
+                    artifactName: '$(artifact.azure.name)'
+                  displayName: 'DownloadPipelineArtifact'
+                  name: 'DownloadPipelineArtifact'
+                    
+                - script: |
+                    curl -T '$(output.directory)/$(artifact.name)' 'https://$(server.dev.user):$(server.dev.password)@$(server.dev.host)/manager/text/deploy?path=/$(artifact.azure.name)&update=true'
+                  displayName: 'Deploying app'
